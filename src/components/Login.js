@@ -1,17 +1,39 @@
 import myImage from '../images/logo.png';
 import DarkMode from './DarkMode';
+import { auth } from './firebase';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
+  // const { signIn } = useAuth(); // Use the signIn function from AuthContext.js
+  // const navigate = useNavigate();
+
+  // // Define your component's state for email and password
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
+
+  // const handleSignIn = async (e) => {
+  //   e.preventDefault();
+
+  //   try {
+  //     // Call the signIn function with email and password
+  //     await signIn(email, password);
+  //     navigate('/panel');
+  //     // Authentication successful, you can navigate to another page or perform other actions here
+  //   } catch (error) {
+  //     // Handle authentication errors (e.g., display an error message to the user)
+  //     console.error('Authentication error:', error);
+  //   }
+  // };
+
   return (
-    <>
-        
-       
+    <>       
       <div className="flex relative flex-1 h-screen dark:bg-gray-900 bg-white flex-col px-6 py-12 lg:px-8">
            <div className='absolute right-5 top-5'>
            <DarkMode/> 
            </div>
                       
-        <div className='mt-40'>
+        <div className='mt-20 sm:mt-28'>
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
             className="mx-auto h-10 w-auto"
