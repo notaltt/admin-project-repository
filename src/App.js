@@ -13,7 +13,7 @@ function App() {
           <Route path="/" element={<Login/>}/>
           <Route path="/panel" element={<Panel/>}/>
           <Route path="/files" element={<Files/>}/>
-          {/* <Route path="/" element={<PrivateRoute/>} /> */}
+          {/* <Route path="/panel" element={<PrivateRoute/>} /> */}
         </Routes>
       </div>
     </Router>

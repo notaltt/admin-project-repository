@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBIEnvAR4FU3S-_U0kbZ_5-Ey8FdbOldvo",
@@ -36,5 +36,14 @@ const deleteData = (collectionName, userId) =>{
 }
 
 
-export {createUser, readUser, updateUser, deleteData, signInWithEmailAndPassword, auth};
+export {
+  createUser,
+  readUser,
+  updateUser,
+  deleteData,
+  signInWithEmailAndPassword,
+  signOut,
+  auth
+};
+
 export default storage;
