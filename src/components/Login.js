@@ -1,33 +1,51 @@
 import myImage from '../images/logo.png';
 import DarkMode from './DarkMode';
-import { auth } from './firebase';
+// import { createUserWithEmailAndPassword } from "firebase/auth";
+import { initializeApp } from "firebase/app";
+// import { getAuth } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
-  // const { signIn } = useAuth(); // Use the signIn function from AuthContext.js
-  // const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  // // Define your component's state for email and password
-  // const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
+  const handleSignUp = (e) => {
+    e.preventDefault();
+    console.log(email);
+    console.log(password);
 
-  // const handleSignIn = async (e) => {
-  //   e.preventDefault();
+    const firebaseConfig = {
+      apiKey: "AIzaSyBIEnvAR4FU3S-_U0kbZ_5-Ey8FdbOldvo",
+      authDomain: "project-repository-2b4f1.firebaseapp.com",
+      databaseURL: "https://project-repository-2b4f1-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "project-repository-2b4f1",
+      storageBucket: "project-repository-2b4f1.appspot.com",
+      messagingSenderId: "618415178892",
+      appId: "1:618415178892:web:d13c5fe58bfef60e6d67a9",
+      measurementId: "G-X9LEXPZP3J"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-  //   try {
-  //     // Call the signIn function with email and password
-  //     await signIn(email, password);
-  //     navigate('/panel');
-  //     // Authentication successful, you can navigate to another page or perform other actions here
-  //   } catch (error) {
-  //     // Handle authentication errors (e.g., display an error message to the user)
-  //     console.error('Authentication error:', error);
-  //   }
-  // };
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        window.location.href = '/panel';
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode);
+        console.log(errorMessage);
+      });
+  };
 
   return (
-    <>       
+    <>
       <div className="flex relative flex-1 h-screen dark:bg-gray-900 bg-white flex-col px-6 py-12 lg:px-8">
            <div className='absolute right-5 top-5'>
            <DarkMode/> 
@@ -46,7 +64,7 @@ export default function Login() {
         </div>
 
         <div className="mt-10 sm:mx-auto dark:bg-gray-900 sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="#" method="POST">
+          <form className="space-y-6" onSubmit={handleSignUp}>
             <div>
               <label htmlFor="email" className="flex text-sm font-medium leading-6 dark:text-white text-gray-900">
                 Email address
@@ -58,6 +76,8 @@ export default function Login() {
                   type="email"
                   autoComplete="email"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -81,6 +101,8 @@ export default function Login() {
                   type="password"
                   autoComplete="current-password"
                   required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                 />
               </div>
