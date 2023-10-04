@@ -47,3 +47,4 @@ export {
 };
 
 export default storage;
+export { firestore };
