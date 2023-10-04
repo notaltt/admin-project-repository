@@ -47,7 +47,7 @@ export default function ManageTeam(){
         const companyRef = doc(db, "company", companyName);
         await setDoc(companyRef, companyData);
     
-        setInputTeamValue(""); // Clear the team name input
+        setInputTeamValue("");
         createFolder(companyStorage, companyName)
         setShowTeam(true); 
       } catch (error) {
@@ -65,12 +65,14 @@ export default function ManageTeam(){
         const companyRef = doc(db, "company", companyName);
         const teamName = `team${teamNumber}`;
         const fieldToUpdate = {};
+        const teamFolder = ref(storage, `company/${companyName}/`);
     
         fieldToUpdate[teamName] = inputTeamValue; 
     
         await updateDoc(companyRef, fieldToUpdate);
     
         setTeamNumber(teamNumber + 1);
+        createFolder(teamFolder, inputTeamValue);
         setInputTeamValue(""); // Clear the team name input
       } catch (error) {
         console.error(error);
