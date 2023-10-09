@@ -200,9 +200,14 @@ export default function ManageTeam() {
     setDeleteCompany(false);
   };
 
+  const goBack = () => {
+    window.location.href = '/panel';
+ 
+  };
+
   return (
     <div>
-      <p>back to main dashboard</p>
+      <p onClick={goBack} className='cursor-pointer'>back to main dashboard</p>
       <div className="flex flex-col items-center justify-center min-h-screen">
       <p>Guide:</p>
       <p>Input company name first to create a company or to add teams on a specific company</p>
