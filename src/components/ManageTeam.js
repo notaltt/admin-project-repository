@@ -355,6 +355,7 @@ export default function ManageTeam() {
       <p>Guide:</p>
       <p>Input company name first to create a company or to add teams on a specific company</p>
       <p>You can't change your company name, so your created company name is final.</p>
+      <p>Click or input the company name or team name to delete.</p>
 
       <div className='w-full flex flex-row items-center justify-center'>
         <div className='w-1/2'>
