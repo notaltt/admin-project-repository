@@ -15,6 +15,8 @@ export default function ManageTeam() {
   const [validationTeamError, setValidationTeamError] = useState(false);
   const [companyData, setCompanyData] = useState([]);
   const [teamData, setTeamData] = useState([]);
+  const [teamExists, setTeamExists] = useState(0);
+  const [deleteTeam, setDeleteTeam] = useState(false);
   // const [editCompany, setEditCompany] = useState(false);
   const [deleteCompany, setDeleteCompany] = useState(false);
   const companyStorage = ref(storage, 'company/');
@@ -129,11 +131,23 @@ export default function ManageTeam() {
     const companyName = e.target.value;
     updateCompanyInputChange(companyName);
   };
+
+  const updateTeamInputChange = async (value) => {
+    setInputTeamValue(value);
+
+    if (value.trim() !== '') {
+      const exists = await checkTeamExists(value);
+      setTeamExists(exists ? 1 : 0);
+    } else {
+      setTeamExists(0); 
+    }
+  }
   
 
   const handleTeamInputChange = (e) => {
     setInputTeamValue(e.target.value);
     setTeamExistsError(false);
+    updateTeamInputChange(e.target.value);
   };
 
   const handleAddCompany = async (e) => {
@@ -168,6 +182,12 @@ export default function ManageTeam() {
       console.error(error);
     }
   };
+
+  function handleClickTeam(teamName){
+    const teamExists = checkTeamExists(teamName);
+    setTeamExists(teamExists ? 1 : 0);
+    setInputTeamValue(teamName);
+  }
 
   async function handleClickCompany(companyName){
     setInputCompanyValue(companyName);
@@ -266,6 +286,8 @@ export default function ManageTeam() {
       setCompanyExistsError(false);
       setDeleteCompany(false);
       setInputCompanyValue('');
+
+      window.location.reload();
     } catch(error){
       console.error(error);
     }
@@ -290,6 +312,35 @@ export default function ManageTeam() {
 
   const handleNoDelete = (e) => {
     setDeleteCompany(false);
+  };
+
+  const handleDeleteTeam = (e) => {
+    setDeleteTeam(true);
+  };
+
+  const handleYesDeleteTeam = async (e) =>{
+    const companyName = inputCompanyValue.trim();
+    const teamName = inputTeamValue.trim();
+    const teamRef = doc(db, 'team', teamName);
+
+    try{
+      const teamStorageRef = ref(storage, `company/${companyName}/${teamName}`)
+      await deleteFolderContents(teamStorageRef);
+
+      await deleteDoc(teamRef);
+      console.log(`${teamName} is deleted.`)
+      setDeleteTeam(false);
+      setTeamExists(0);
+      setInputTeamValue('');
+
+      window.location.reload();
+    }catch(error){
+      console.error(error);
+    }
+  };
+
+  const handleNoDeleteTeam = (e) => {
+    setDeleteTeam(false);
   };
 
   const goBack = () => {
@@ -360,7 +411,9 @@ export default function ManageTeam() {
                 ) : (
                   <ul>
                     {teamData.map((doc) => (
-                      <li key={doc.id}>{doc.teamName}</li>
+                      <li key={doc.id}>
+                        <p className='hover:bg-blue-100 cursor-pointer' onClick={() => handleClickTeam(doc.teamName)}>{doc.teamName}</p>
+                      </li>
                     ))}
                   </ul>
                 )}
@@ -380,7 +433,14 @@ export default function ManageTeam() {
           {teamExistsError && (
             <p className="text-red-600">Team already exists.</p>
           )}
-          <button className="mt-2 p-2 bg-blue-500 text-white rounded shadow-md hover:bg-blue-600" onClick={handleCreateTeam}>Create Team</button>
+          {teamExists === 1 ? (
+            <button className="mt-2 p-2 bg-red-500 text-white rounded shadow-md hover:bg-red-600" onClick={handleDeleteTeam}>Delete Team</button>
+          ): (
+            <button className="mt-2 p-2 bg-blue-500 text-white rounded shadow-md hover:bg-blue-600" onClick={handleCreateTeam}>Create Team</button>
+          )}
+          {deleteTeam && (
+            <p className="text-red-600">Are you sure deleting team {inputTeamValue}? <strong className='cursor-pointer' onClick={handleYesDeleteTeam}>YES</strong> or <strong className='cursor-pointer' onClick={handleNoDeleteTeam}>NO</strong></p>
+          )}
         </div>
       )}
     </div>
