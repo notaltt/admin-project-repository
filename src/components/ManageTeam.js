@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { collection, doc, setDoc, updateDoc, query, getDocs, where, deleteDoc } from 'firebase/firestore';
 import storage, { firestore as db } from './firebase';
 import { ref, deleteObject, listAll, getMetadata, uploadString } from 'firebase/storage';
 
 export default function ManageTeam() {
-  const [showButton, setShowButton] = useState(false);
   const [showTeam, setShowTeam] = useState(false);
   const [inputCompanyValue, setInputCompanyValue] = useState('');
   const [inputTeamValue, setInputTeamValue] = useState('');
@@ -12,12 +11,32 @@ export default function ManageTeam() {
   const [companyExistsError, setCompanyExistsError] = useState(false);
   const [teamExistsError, setTeamExistsError] = useState(false);
   const [addCompanyError, setAddCompanyError] = useState(false);
+  const [validationError, setValidationError] = useState(false);
+  const [validationTeamError, setValidationTeamError] = useState(false);
+  const [companyData, setCompanyData] = useState([]);
+  const [teamData, setTeamData] = useState([]);
   // const [editCompany, setEditCompany] = useState(false);
   const [deleteCompany, setDeleteCompany] = useState(false);
   const companyStorage = ref(storage, 'company/');
 
   function nameValidation(name) {
-    return name.length >= 6;
+    if(name.length >= 6){
+      setValidationError(false);
+      return true;
+    }else{
+      setValidationError(true);
+      return false;
+    }
+  }
+
+  function teamNameValidation(name){
+    if(name.length >= 6){
+      setValidationTeamError(false);
+      return true;
+    }else{
+      setValidationTeamError(true);
+      return false;
+    }
   }
 
   async function checkTeamExists(name) {
@@ -36,6 +55,50 @@ export default function ManageTeam() {
     return !querySnapshot.empty;
   }
 
+  useEffect(() => {
+    const fetchCompanyData = async () => {
+      const collectionRef = collection(db, 'company');
+      const queryRef = query(collectionRef, where('companyName', '>=', ''));
+  
+      try {
+        const querySnapshot = await getDocs(queryRef);
+        const data = [];
+  
+        querySnapshot.forEach((doc) => {
+          data.push({ id: doc.id, ...doc.data() });
+        });
+  
+        setCompanyData(data);
+      } catch (error) {
+        console.error('Error fetching company data:', error);
+      }
+    };
+  
+    fetchCompanyData();
+  }, []);
+
+  // useEffect(() =>{
+  //   const fetchTeamData = async () => {
+  //     const collectionRef = collection(db, 'team');
+  //     const queryRef = query(collectionRef, where('fromCompany', '==', ));
+  
+  //     try {
+  //       const querySnapshot = await getDocs(queryRef);
+  //       const data = [];
+  
+  //       querySnapshot.forEach((doc) => {
+  //         data.push({ id: doc.id, ...doc.data() });
+  //       });
+  
+  //       setTeamData(data);
+  //     } catch (error) {
+  //       console.error('Error fetching company data:', error);
+  //     }
+  //   };
+  
+  //   fetchTeamData();
+  // }, [])
+
   async function createFolder(currentRef, folderName) {
     const newDir = ref(currentRef, folderName);
 
@@ -49,12 +112,24 @@ export default function ManageTeam() {
     }
   }
 
-  const handleCompanyInputChange = (e) => {
-    setInputCompanyValue(e.target.value);
-    setShowTeam(false);
-    setShowButton(e.target.value !== '');
+  const updateCompanyInputChange = async (value) => {
+    setInputCompanyValue(value);
     setCompanyExistsError(false);
+    setValidationTeamError(false);
+  
+    if (value !== '') {
+      const exists = await checkCompanyExists(value);
+      setShowTeam(exists);
+    } else {
+      setShowTeam(false);
+    }
   };
+
+  const handleCompanyInputChange = async (e) => {
+    const companyName = e.target.value;
+    updateCompanyInputChange(companyName);
+  };
+  
 
   const handleTeamInputChange = (e) => {
     setInputTeamValue(e.target.value);
@@ -65,6 +140,7 @@ export default function ManageTeam() {
     e.preventDefault();
 
     const companyName = inputCompanyValue.trim();
+    nameValidation(companyName);
 
     if (!nameValidation(companyName)) {
       return;
@@ -93,20 +169,34 @@ export default function ManageTeam() {
     }
   };
 
-  const handleButtonTeam = () => {
-    const companyName = inputCompanyValue.trim();
-    if(!checkCompanyExists(companyName)){
-      setShowTeam(true);
-    }else{
-      setAddCompanyError(true);
+  async function handleClickCompany(companyName){
+    setInputCompanyValue(companyName);
+    updateCompanyInputChange(companyName);
+
+    const collectionRef = collection(db, 'team');
+    const queryRef = query(collectionRef, where('fromCompany', '==', companyName));
+
+    try {
+      const querySnapshot = await getDocs(queryRef);
+      const data = [];
+
+      querySnapshot.forEach((doc) => {
+        data.push({ id: doc.id, ...doc.data() });
+      });
+
+      setTeamData(data);
+    } catch (error) {
+      console.error('Error fetching company data:', error);
     }
-  };
+  }
 
   const handleCreateTeam = async () => {
     const companyName = inputCompanyValue.trim();
     const teamNameInput = inputTeamValue.trim();
 
-    if (!nameValidation(teamNameInput)) {
+    teamNameValidation(teamNameInput);
+
+    if (!teamNameValidation(teamNameInput)) {
       return;
     }
 
@@ -140,6 +230,7 @@ export default function ManageTeam() {
     }
   };
 
+
   const handleDelete = (e) => {
     setDeleteCompany(true);
     // setEditCompany(false);
@@ -155,14 +246,15 @@ export default function ManageTeam() {
     const companyRef = doc(db, 'company', trimmedInput);
 
     try{
-      const teamsQuery = await getDocs(collection(db, 'team'), where('fromCompany', '==', trimmedInput));
-
-      const deleteTeams = teamsQuery.docs.map(async (teamDoc) =>{
-        await deleteDoc(teamDoc.ref);
-        console.log(`team ${teamDoc.id} is deleted.`);
+      const teamQuery = query(collection(db, 'team'), where('fromCompany', '==', trimmedInput));
+      const teamSnapshot = await getDocs(teamQuery);
+      const deleteTeamPromises = [];
+  
+      teamSnapshot.forEach((teamDoc) => {
+        deleteTeamPromises.push(deleteDoc(teamDoc.ref));
       });
 
-      await Promise.all(deleteTeams);
+      await Promise.all(deleteTeamPromises);
 
       console.log("All teams are deleted.")
 
@@ -212,43 +304,77 @@ export default function ManageTeam() {
       <p>Guide:</p>
       <p>Input company name first to create a company or to add teams on a specific company</p>
       <p>You can't change your company name, so your created company name is final.</p>
-      <input type="text" className="w-1/4 p-2 border rounded shadow-md focus:outline-none focus:ring focus:border-blue-300" placeholder="Company's name"
-        value={inputCompanyValue} onChange={handleCompanyInputChange} required/>
 
-      {!nameValidation(inputCompanyValue) && (
-        <p className="text-red-600"> Company name must be at least 6 characters long.</p>
-      )}
+      <div className='w-full flex flex-row items-center justify-center'>
+        <div className='w-1/2'>
+          <input type="text" className="w-full p-2 border rounded shadow-md focus:outline-none focus:ring focus:border-blue-300" placeholder="Company's name"
+            value={inputCompanyValue} onChange={handleCompanyInputChange} required/>
+          {validationError && (
+              <p className="text-red-600"> Company name must be at least 6 characters long.</p>
+            )}
 
-      {companyExistsError && (
-        <p className="text-red-600">Company already exists. Do you want to <strong className='cursor-pointer' onClick={handleDelete}>delete</strong> the company?</p>
-      )}
+            {companyExistsError && (
+              <p className="text-red-600">Company already exists. Do you want to <strong className='cursor-pointer' onClick={handleDelete}>delete</strong> the company?</p>
+            )}
 
-      {/* {editCompany && (
-        <div>
-          test
+            {deleteCompany && (
+              <p className="text-red-600">Are you sure deleting {inputCompanyValue}? <strong className='cursor-pointer' onClick={handleYesDelete}>YES</strong> or <strong className='cursor-pointer' onClick={handleNoDelete}>NO</strong></p>
+            )}
+
+            {addCompanyError && (
+              <p className="text-red-600">Add the company first.</p>
+          )}
         </div>
-      )} */}
-
-      {deleteCompany && (
-        <p className="text-red-600">Are you sure deleting {inputCompanyValue}? <strong className='cursor-pointer' onClick={handleYesDelete}>YES</strong> or <strong className='cursor-pointer' onClick={handleNoDelete}>NO</strong></p>
-      )}
-
-      {addCompanyError && (
-        <p className="text-red-600">Add the company first.</p>
-      )}
-
-      {showButton && (
-        <div className="w-1/4 flex flex-row gap-3">
-          <button className="flex-grow mt-2 p-2 bg-blue-500 text-white rounded shadow-md hover:bg-blue-600" onClick={handleButtonTeam}>Add Team</button>
-          <button className="flex-grow mt-2 p-2 bg-blue-500 text-white rounded shadow-md hover:bg-blue-600" onClick={handleAddCompany}>Add Company</button>
+        <div className="flex flex-row gap-3 ml-3">
+          <button className="flex-grow p-2 bg-blue-500 text-white rounded shadow-md hover:bg-blue-600" onClick={handleAddCompany}>Add Company</button>
+          <button className="flex-grow p-2 bg-red-500 text-white rounded shadow-md hover:bg-red-600" onClick={handleDelete}>Delete Company</button>
         </div>
-      )}
+      </div>
+
+      <div id='list' className='bg-blue-50 w-1/2 h-full flex rounded mt-2'>
+        <div id='company' className='w-1/2'>
+          <h2>COMPANY</h2>
+          <ul>
+            {companyData.length === 0 ? (
+              <p>No data available.</p>
+            ) : (
+              <ul>
+                {companyData.map((doc) => (
+                  <li key={doc.id}>
+                    <p className='hover:bg-blue-100 cursor-pointer' onClick={() => handleClickCompany(doc.companyName)}>{doc.companyName}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </ul>
+        </div>
+        <div id='team' className='w-1/2'>
+          <h2>TEAM</h2>
+          <ul>
+            {inputCompanyValue.length === 0 ? (
+              <p>No Company Selected.</p>
+            ) : (
+              <div>
+                {teamData.length === 0? (
+                  <p>No Teams available.</p>
+                ) : (
+                  <ul>
+                    {teamData.map((doc) => (
+                      <li key={doc.id}>{doc.teamName}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+          </ul>
+        </div>
+      </div>
 
       {showTeam && (
-        <div className="w-1/4 flex flex-col">
+        <div className="w-1/2 flex flex-col">
           <input type="text" className="mt-3 p-2 border rounded shadow-md focus:outline-none focus:ring focus:border-blue-300" placeholder="Team's name"
-            value={inputTeamValue}onChange={handleTeamInputChange} required/>
-          {!nameValidation(inputTeamValue) && (
+            value={inputTeamValue} onChange={handleTeamInputChange} required/>
+          {validationTeamError && (
             <p className="text-red-600"> Team name must be at least 6 characters long.</p>
           )}
           {teamExistsError && (
