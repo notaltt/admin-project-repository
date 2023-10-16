@@ -1,7 +1,157 @@
 import SideBar from './SideBar';
 import {firestore as db} from './firebase';
-import { collection, query, doc, getDocs, deleteDoc } from "firebase/firestore";
+import { collection, query, doc, setDoc, getDocs, deleteDoc } from "firebase/firestore";
 import { useState, useEffect } from 'react';
+
+// function CreateUserModal({ isOpen, closeModal }) {
+//     if (!isOpen) return null;
+
+//     class User {
+//         constructor (name, avatar, company, email, phone, role, username ) {
+//             this.name = name;
+//             this.avatar = avatar;
+//             this.company = company;
+//             this.email = email;
+//             this.phone = phone;
+//             this.role = role;
+//             this.username = username;
+//         }
+//         toString() {
+//             return this.name + ', ' + this.state + ', ' + this.country;
+//         }
+//     }
+
+//     data = new User('', '', '', '', '', '', '');
+
+//     const userConverter = {
+//         toFirestore: (user) => {
+//             return {
+//                 name: user.name,
+//                 name: user.avatar,
+//                 name: user.company,
+//                 name: user.email,
+//                 name: user.phone,
+//                 name: user.role,
+//                 name: user.username
+//                 };
+//         },
+//         fromFirestore: (snapshot, options) => {
+//             const data = snapshot.data(options);
+//             return new User(data.name, data.avatar, data.company, data.email, data.phone, data.role);
+//         }
+//     };
+
+//     const handleInputChange = (e) => {
+//         const { name, value } = e.target;
+//         data = ((data) => ({
+//           ...data,
+//           [name]: value,
+//         }));
+//       };
+
+//     const onCreate = (User) => {
+//         setDoc(doc(db, "cities", "new-city-id"), data);
+//         console.log('User data saved:', User);
+//         closeModal();
+//     };
+  
+//     return (
+//       <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-75 bg-gray-800">
+//         <div className="modal-overlay"></div>
+//         <div className="modal-container bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
+//           <div className="modal-content py-4 text-left px-6">
+//             <div className="flex justify-between items-center pb-3">
+//               <p className="text-2xl font-bold">User Details</p>
+//               <button
+//                 onClick={closeModal}
+//                 className="modal-close cursor-pointer z-50 text-3xl"
+//               >
+//                 &times;
+//               </button>
+//             </div>
+//             <div>
+//                 <p>ID: {User.id}</p>
+//                 <div className='flex pt-1'>
+//                 Name:
+//                 <input
+//                     type="text"
+//                     name="name"
+//                     value={User.data.name}
+//                     onChange={handleInputChange}
+//                     className="border p-1 ms-2 flex-grow"
+//                 />
+//                 </div>
+//                 <div className='flex pt-1'>
+//                 Avatar:
+//                 <input
+//                     type="text"
+//                     name="avatar"
+//                     value={User.data.avatar}
+//                     onChange={handleInputChange}
+//                     className="border p-1 ms-2 flex-grow"
+//                 />
+//                 </div>
+//                 <div className='flex pt-1'>
+//                 Company:
+//                 <input
+//                     type="text"
+//                     name="company"
+//                     value={User.data.company}
+//                     onChange={handleInputChange}
+//                     className="border p-1 ms-2 flex-grow"
+//                 />
+//                 </div>
+//                 <div className='flex pt-1'>
+//                 Email:
+//                 <input
+//                     type="text"
+//                     name="email"
+//                     value={User.data.email}
+//                     onChange={handleInputChange}
+//                     className="border p-1 ms-2 flex-grow"
+//                 />
+//                 </div>
+//                 <div className='flex pt-1'>
+//                 Phone:
+//                 <input
+//                     type="text"
+//                     name="phone"
+//                     value={User.data.phone}
+//                     onChange={handleInputChange}
+//                     className="border p-1 ms-2 flex-grow"
+//                 />
+//                 </div>
+//                 <div className='flex pt-1'>
+//                 Role:
+//                 <input
+//                     type="text"
+//                     name="role"
+//                     value={User.data.role}
+//                     onChange={handleInputChange}
+//                     className="border p-1 ms-2 flex-grow"
+//                 />
+//                 </div>
+//                 <div className='flex pt-1'>
+//                 Username:
+//                 <input
+//                     type="text"
+//                     name="username"
+//                     value={User.data.username}
+//                     onChange={handleInputChange}
+//                     className="border p-1 ms-2 flex-grow"
+//                 />
+//                 </div>
+//             </div>
+//             <div className="mt-4 flex justify-end">
+//               <button onClick={() => onCreate(User)} className=" bg-slate-500 text-white px-3 py-2 mr-2 rounded">
+//                 Create
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     );
+// }
 
 function UserModal({ isOpen, closeModal, user }) {
     if (!isOpen) return null;
