@@ -54,7 +54,7 @@ export default function FileList(){
   }
 
   return (
-    <div>
+    <div className='dark:text-gray-200'>
       <div id='file-header' className='h-full w-full grid grid-cols-3 pl-2 pt-3 border-b border-gray-300'>
         <div className='flex'>
           <h1>Name</h1>

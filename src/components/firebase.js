@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { collection, doc, setDoc } from "firebase/firestore"; 
 
 const firebaseConfig = {
   apiKey: "AIzaSyBIEnvAR4FU3S-_U0kbZ_5-Ey8FdbOldvo",
@@ -18,6 +19,8 @@ const auth = getAuth(app);
 
 const firestore = getFirestore(app);
 const storage = getStorage(app);
+
+const userRef = collection(firestore, "users");
 
 const createUser = (collectionName, data) => {
   return firestore.collection(collectionName).add(data);
@@ -43,8 +46,8 @@ export {
   deleteData,
   signInWithEmailAndPassword,
   signOut,
+  firestore,
   auth
 };
 
 export default storage;
-export { firestore };
