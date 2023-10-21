@@ -17,7 +17,7 @@ export default function Login() {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        window.location.href = '/panel';
+        window.location.href = '/manage-team';
       })
       .catch((error) => {
         const errorCode = error.code;

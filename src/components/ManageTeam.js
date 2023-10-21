@@ -231,10 +231,12 @@ export default function ManageTeam() {
     const fieldToUpdate = {};
     const teamFolder = ref(storage, `company/${companyName}/`);
 
+    const teamNameInputArray = teamNameInput.split(',');
+
     const teamData = {
       fromCompany: companyName,
-      teamName: teamNameInput,
-      member0: '',
+      teamName: teamNameInputArray,
+      members: [],
     };
 
     fieldToUpdate[teamName] = teamNameInput;
@@ -320,7 +322,13 @@ export default function ManageTeam() {
 
   const handleYesDeleteTeam = async (e) =>{
     const companyName = inputCompanyValue.trim();
-    const teamName = inputTeamValue.trim();
+    let teamName = '';
+
+    if (Array.isArray(inputTeamValue) && inputTeamValue.length > 0) {
+      teamName = inputTeamValue[0];
+    }
+    console.log("test"+typeof inputTeamValue);
+    console.log("test"+inputTeamValue);
     const teamRef = doc(db, 'team', teamName);
 
     try{
@@ -343,15 +351,9 @@ export default function ManageTeam() {
     setDeleteTeam(false);
   };
 
-  const goBack = () => {
-    window.location.href = '/panel';
- 
-  };
-
   return (
     <div>
-      <p onClick={goBack} className='cursor-pointer'>back to main dashboard</p>
-      <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="flex flex-col items-center justify-center mt-20">
       <p>Guide:</p>
       <p>Input company name first to create a company or to add teams on a specific company</p>
       <p>You can't change your company name, so your created company name is final.</p>
@@ -383,7 +385,7 @@ export default function ManageTeam() {
         </div>
       </div>
 
-      <div id='list' className='bg-blue-50 w-1/2 h-full flex rounded mt-2'>
+      <div id='list' className='bg-blue-50 w-3/4 h-full flex rounded mt-2 p-2'>
         <div id='company' className='w-1/2'>
           <h2>COMPANY</h2>
           <ul>
