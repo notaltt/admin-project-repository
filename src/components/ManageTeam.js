@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, doc, setDoc, updateDoc, query, getDocs, where, deleteDoc } from 'firebase/firestore';
+import { collection, doc, setDoc, updateDoc, query, getDocs, where, deleteDoc, arrayUnion} from 'firebase/firestore';
 import storage, { firestore as db } from './firebase';
 import { ref, deleteObject, listAll, getMetadata, uploadString } from 'firebase/storage';
 
@@ -154,6 +154,7 @@ export default function ManageTeam() {
     e.preventDefault();
 
     const companyName = inputCompanyValue.trim();
+    const teamName = inputTeamValue.trim();
     nameValidation(companyName);
 
     if (!nameValidation(companyName)) {
@@ -167,7 +168,7 @@ export default function ManageTeam() {
 
     const companyData = {
       companyName: inputCompanyValue,
-      team0: inputTeamValue,
+      teams: [],
     };
 
     const companyRef = doc(db, 'company', companyName);
@@ -242,7 +243,9 @@ export default function ManageTeam() {
     fieldToUpdate[teamName] = teamNameInput;
 
     try {
-      await updateDoc(companyRef, fieldToUpdate);
+      await updateDoc(companyRef, {
+        teams: arrayUnion(...teamNameInputArray)
+      });
       await setDoc(teamRef, teamData);
       setTeamNumber(teamNumber + 1);
       createFolder(teamFolder, teamNameInput);
