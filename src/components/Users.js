@@ -68,13 +68,13 @@ function UserModal({ isOpen, closeModal, user }) {
             </button>
           </div>
           <div>
-              <p>ID: {editedUser.id}</p>
+              <p>ID: {user.id}</p>
               <div className='flex pt-1'>
               Avatar:
               <input
                   type="text"
                   name="avatar"
-                  value={editedUser.data.avatar}
+                  value={user.data.avatar}
                   onChange={handleInputChange}
                   className="border p-1 ms-2 flex-grow"
               />
@@ -84,7 +84,7 @@ function UserModal({ isOpen, closeModal, user }) {
               <input
                   type="text"
                   name="company"
-                  value={editedUser.data.company}
+                  value={user.data.company}
                   onChange={handleInputChange}
                   className="border p-1 ms-2 flex-grow"
               />
@@ -94,7 +94,7 @@ function UserModal({ isOpen, closeModal, user }) {
               <input
                   type="text"
                   name="email"
-                  value={editedUser.data.email}
+                  value={user.data.email}
                   onChange={handleInputChange}
                   className="border p-1 ms-2 flex-grow"
               />
@@ -104,7 +104,7 @@ function UserModal({ isOpen, closeModal, user }) {
               <input
                   type="text"
                   name="name"
-                  value={editedUser.data.name}
+                  value={user.data.name}
                   onChange={handleInputChange}
                   className="border p-1 ms-2 flex-grow"
               />
@@ -114,7 +114,7 @@ function UserModal({ isOpen, closeModal, user }) {
               <input
                   type="text"
                   name="phone"
-                  value={editedUser.data.phone}
+                  value={user.data.phone}
                   onChange={handleInputChange}
                   className="border p-1 ms-2 flex-grow"
               />
@@ -124,7 +124,7 @@ function UserModal({ isOpen, closeModal, user }) {
               <input
                   type="text"
                   name="role"
-                  value={editedUser.data.role}
+                  value={user.data.role}
                   onChange={handleInputChange}
                   className="border p-1 ms-2 flex-grow"
               />
@@ -134,7 +134,7 @@ function UserModal({ isOpen, closeModal, user }) {
               <input
                   type="text"
                   name="role"
-                  value={editedUser.data.username}
+                  value={user.data.username}
                   onChange={handleInputChange}
                   className="border p-1 ms-2 flex-grow"
               />
