@@ -16,13 +16,16 @@ export default function CardGrid() {
 
   const manageTeam = () => {
     window.location.href = '/manage-team';
- 
+  };
+
+  const manageUsers = () => {
+    window.location.href = '/users';
   };
 
   return (
     <div className="h-screen grid grid-rows-4 grid-cols-1 sm:grid-cols-2 sm:grid-rows-2 bg-gray-950 gap-6 p-6">
       
-      <a className="bg-white dark:bg-gray-700 dark:text-gray-100 shadow-md rounded-lg group relative hover:bg-gray-500 duration-200 p-6 font-semibold text-lg flex items-center flex-col">
+      <a onClick={manageUsers} className="cursor-pointer bg-white dark:bg-gray-700 dark:text-gray-100 shadow-md rounded-lg group relative hover:bg-gray-500 duration-200 p-6 font-semibold text-lg flex items-center flex-col">
 
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-full p-6">
         <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd" />
