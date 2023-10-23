@@ -33,7 +33,6 @@ const navigation = [
         href: '#',
         active: false,
     },
-    
 ]
 
 const SideBar = ({ isOpen, toggleSidebar }) =>{
