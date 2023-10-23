@@ -10,19 +10,19 @@ function UserModal({ isOpen, closeModal, user }) {
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    // Update the editedUser state with the new value
-    setEditedUser({
-      ...editedUser,
+    // Use the functional form of setEditedUser to ensure you're working with the latest state
+    setEditedUser((prevEditedUser) => ({
+      ...prevEditedUser,
       data: {
-        ...editedUser.data,
+        ...prevEditedUser.data,
         [name]: value,
       },
-    });
+    }));
   };
   
   const onSave = async (editedUser) => {
     try {
-      const userDocRef = doc(db, 'users', editedUser.id);
+      const userDocRef = doc(db, 'users', user.id);
       // Update the document in Firestore with the new data
       await updateDoc(userDocRef, {
         avatar: editedUser.data.avatar,
@@ -46,6 +46,10 @@ function UserModal({ isOpen, closeModal, user }) {
     console.log('User data deleted:', userToDelete);
     closeModal();
   };
+
+  useEffect(() => {
+    setEditedUser(user);
+  }, [user]);
       
   if (!isOpen) return null;
   
