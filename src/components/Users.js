@@ -133,7 +133,7 @@ function UserModal({ isOpen, closeModal, user }) {
               Username:
               <input
                   type="text"
-                  name="role"
+                  name="username"
                   value={editedUser?.data?.username || ''} 
                   onChange={handleInputChange}
                   className="border p-1 ms-2 flex-grow"
