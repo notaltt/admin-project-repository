@@ -228,8 +228,10 @@ export default function ManageTeam() {
 
     const companyRef = doc(db, 'company', companyName);
     const teamRef = doc(db, 'team', teamNameInput);
+    const notficationRef = doc(db, 'notifications', teamNameInput);
     const teamName = `team${teamNumber}`;
     const fieldToUpdate = {};
+    const notData = [];
     const teamFolder = ref(storage, `company/${companyName}/`);
 
     const teamNameInputArray = teamNameInput.split(',');
@@ -243,6 +245,9 @@ export default function ManageTeam() {
     fieldToUpdate[teamName] = teamNameInput;
 
     try {
+      await setDoc(notficationRef, {
+        notificationData: notData,
+      });
       await updateDoc(companyRef, {
         teams: arrayUnion(...teamNameInputArray)
       });
