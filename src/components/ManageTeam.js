@@ -41,14 +41,6 @@ export default function ManageTeam() {
     }
   }
 
-  async function checkTeamExists(name) {
-    const teamsCollectionRef = collection(db, 'team');
-    const queryRef = query(teamsCollectionRef, where('teamName', '==', name));
-
-    const querySnapshot = await getDocs(queryRef);
-    return !querySnapshot.empty;
-  }
-
   async function checkCompanyExists(name){
     const teamsCollectionRef = collection(db, 'company');
     const queryRef = query(teamsCollectionRef, where('companyName', '==', name));
@@ -58,26 +50,26 @@ export default function ManageTeam() {
   }
 
   useEffect(() => {
-    const fetchCompanyData = async () => {
-      const collectionRef = collection(db, 'company');
-      const queryRef = query(collectionRef, where('companyName', '>=', ''));
-  
-      try {
-        const querySnapshot = await getDocs(queryRef);
-        const data = [];
-  
-        querySnapshot.forEach((doc) => {
-          data.push({ id: doc.id, ...doc.data() });
-        });
-  
-        setCompanyData(data);
-      } catch (error) {
-        console.error('Error fetching company data:', error);
-      }
-    };
-  
     fetchCompanyData();
   }, []);
+
+  const fetchCompanyData = async () => {
+    const collectionRef = collection(db, 'company');
+    const queryRef = query(collectionRef, where('companyName', '>=', ''));
+
+    try {
+      const querySnapshot = await getDocs(queryRef);
+      const data = [];
+
+      querySnapshot.forEach((doc) => {
+        data.push({ id: doc.id, ...doc.data() });
+      });
+
+      setCompanyData(data);
+    } catch (error) {
+      console.error('Error fetching company data:', error);
+    }
+  };
 
   // useEffect(() =>{
   //   const fetchTeamData = async () => {
@@ -130,24 +122,13 @@ export default function ManageTeam() {
   const handleCompanyInputChange = async (e) => {
     const companyName = e.target.value;
     updateCompanyInputChange(companyName);
+    setTeamExistsError(false);
   };
 
-  const updateTeamInputChange = async (value) => {
-    setInputTeamValue(value);
-
-    if (value.trim() !== '') {
-      const exists = await checkTeamExists(value);
-      setTeamExists(exists ? 1 : 0);
-    } else {
-      setTeamExists(0); 
-    }
-  }
-  
 
   const handleTeamInputChange = (e) => {
     setInputTeamValue(e.target.value);
     setTeamExistsError(false);
-    updateTeamInputChange(e.target.value);
   };
 
   const handleAddCompany = async (e) => {
@@ -178,6 +159,7 @@ export default function ManageTeam() {
       setAddCompanyError(false);
       setInputTeamValue('');
       createFolder(companyStorage, companyName);
+      fetchCompanyData();
       setShowTeam(true);
     } catch (error) {
       console.error(error);
@@ -211,45 +193,61 @@ export default function ManageTeam() {
     }
   }
 
+  function generateRandomUID(length){
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let randomString = '';
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    randomString += characters.charAt(randomIndex);
+  }
+
+  return randomString;
+  }
+
   const handleCreateTeam = async () => {
     const companyName = inputCompanyValue.trim();
     const teamNameInput = inputTeamValue.trim();
-
+  
     teamNameValidation(teamNameInput);
-
+  
     if (!teamNameValidation(teamNameInput)) {
       return;
     }
-
-    if (await checkTeamExists(teamNameInput)) {
+  
+    const teamNameInputArray = teamNameInput.split(',');
+  
+    if (await checkTeamExists(teamNameInputArray, companyName)) {
       setTeamExistsError(true);
       return;
     }
-
+  
     const companyRef = doc(db, 'company', companyName);
-    const teamRef = doc(db, 'team', teamNameInput);
+    const teamRef = doc(db, 'team', generateRandomUID(10));
+    const fileRef = doc(db, 'files', teamNameInput);
     const notficationRef = doc(db, 'notifications', teamNameInput);
     const teamName = `team${teamNumber}`;
     const fieldToUpdate = {};
     const notData = [];
     const teamFolder = ref(storage, `company/${companyName}/`);
-
-    const teamNameInputArray = teamNameInput.split(',');
-
+  
     const teamData = {
       fromCompany: companyName,
       teamName: teamNameInputArray,
       members: [],
     };
-
+  
     fieldToUpdate[teamName] = teamNameInput;
-
+  
     try {
       await setDoc(notficationRef, {
         notificationData: notData,
       });
+      await setDoc(fileRef, {
+        fileData: notData,
+      });
       await updateDoc(companyRef, {
-        teams: arrayUnion(...teamNameInputArray)
+        teams: arrayUnion(...teamNameInputArray),
       });
       await setDoc(teamRef, teamData);
       setTeamNumber(teamNumber + 1);
@@ -259,6 +257,18 @@ export default function ManageTeam() {
       console.error(error);
     }
   };
+  
+  async function checkTeamExists(name, company) {
+    const teamsCollectionRef = collection(db, 'team');
+    const queryRef = query(
+      teamsCollectionRef,
+      where('teamName', 'array-contains-any', name),
+      where('fromCompany', '==', company)
+    );
+  
+    const querySnapshot = await getDocs(queryRef);
+    return !querySnapshot.empty;
+  }
 
 
   const handleDelete = (e) => {
@@ -335,15 +345,21 @@ export default function ManageTeam() {
     if (Array.isArray(inputTeamValue) && inputTeamValue.length > 0) {
       teamName = inputTeamValue[0];
     }
-    console.log("test"+typeof inputTeamValue);
-    console.log("test"+inputTeamValue);
-    const teamRef = doc(db, 'team', teamName);
+    const teamRef = doc(db, 'team');
+    const teamQuery = query(teamRef, where('teamName', 'array-contains-any', inputTeamValue), where('fromCompany', '==', companyName));
 
     try{
+      const teamSnapshot = await getDocs(teamQuery);
       const teamStorageRef = ref(storage, `company/${companyName}/${teamName}`)
       await deleteFolderContents(teamStorageRef);
-
-      await deleteDoc(teamRef);
+      teamSnapshot.forEach(async (doc) => {
+        try {
+            await deleteDoc(doc.ref);
+            console.log(`Document with teamName ${inputTeamValue} successfully deleted.`);
+        } catch (deleteError) {
+            console.error("Error deleting document:", deleteError);
+        }
+    });
       console.log(`${teamName} is deleted.`)
       setDeleteTeam(false);
       setTeamExists(0);
