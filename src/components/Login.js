@@ -10,32 +10,47 @@ export default function Login() {
 
   const handleSignUp = (e) => {
     e.preventDefault();
-    
+  
     const spinner = document.getElementById('spinner');
     spinner.classList.remove('hidden');
-
+  
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
+  
+        // Check if the user's UID is not the admin UID
+        if (user.uid !== '5slNpb34CVQQRWNHaGl9CTMuVdD3') {
+          throw new Error("notadmin");
+        }
+  
+        // Redirect to '/manage-team' if the UID is the admin UID
         window.location.href = '/manage-team';
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-
+  
         // Check if the error code indicates incorrect credentials
-        if (errorCode === 'auth/wrong-password' || errorCode === 'auth/user-not-found') {
+        if (errorCode === 'auth/wrong-password' ||
+            errorCode === 'auth/user-not-found' ||
+            errorMessage === 'notadmin') {
           // Display the modal with the error message
           const modal = document.getElementById('modal');
           const errorMessageElement = document.getElementById('error-message');
           errorMessageElement.textContent = 'Credentials are incorrect. Please try again.';
+          if (errorMessage === 'notadmin')
+            errorMessageElement.textContent = `This account isn't admin!`;
           modal.classList.remove('hidden');
-
+  
           // Add a click event listener to close the modal
           const closeModalButton = document.getElementById('close-modal');
           closeModalButton.addEventListener('click', () => {
             modal.classList.add('hidden');
+            spinner.classList.add('hidden');
           });
+        } else {
+          // Handle other authentication errors
+          console.error(errorMessage);
         }
       });
   };
