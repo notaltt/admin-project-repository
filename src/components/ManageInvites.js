@@ -16,7 +16,6 @@ export default function ManageInvites(){
     }
 
     const handleRowClick = (selectedInviteId) => {
-      console.log();
       const thisSelectedInvite = inviteData.find((invite) => invite.id === selectedInviteId);
       setSelectedInvite(thisSelectedInvite);
       setIsModalOpen(true);
@@ -48,9 +47,8 @@ export default function ManageInvites(){
 
 
 
-    function InviteModal({ isOpen, closeModal, invite }) {
+    function InviteModal({ isOpen, closeModal }) {
       const [selectedDate, setSelectedDate] = useState(selectedInvite?.data.time.toDate() ?? new Date());
-      console.log(invite);
 
       const onDelete = async () => {
         const inviteDocRef = doc(db, 'invites', selectedInvite.id);
@@ -60,13 +58,13 @@ export default function ManageInvites(){
       };
 
       const onSave = async (editedUser) => {
-        // const inviteDocRef = doc(db, 'invites', selectedInvite.id);
-        // try { await updateDoc(inviteDocRef, { date: selectedDate });
-        //   console.log('invite data saved:', editedUser);
-        //   closeModal();
-        // } catch (error) {
-        //   console.error('Error saving invite data:', error);
-        // }
+        const inviteDocRef = doc(db, 'invites', selectedInvite.id);
+        try { await updateDoc(inviteDocRef, { date: selectedDate });
+          console.log('invite data saved:', editedUser);
+          closeModal();
+        } catch (error) {
+          console.error('Error saving invite data:', error);
+        }
       };
     
       if (!isOpen) return null;
@@ -119,7 +117,7 @@ export default function ManageInvites(){
         <div className="flex bg-white dark:bg-gray-950 h-screen overflow-hidden">
            
             <SideBar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar}/>
-            <InviteModal isOpen={isModalOpen} closeModal={closeModal} invite={selectedInvite} />
+            <InviteModal isOpen={isModalOpen} closeModal={closeModal} />
 
             <div className='flex flex-col flex-1 w-full  overflow-y-scroll'>
                 <header className='justify-content =shadow-md dark:bg-gray-950 bg-blue-50'>
@@ -133,6 +131,7 @@ export default function ManageInvites(){
                       <th key={index} className="px-4 py-2">{header}</th> ))}
                     </thead>
                     <tbody>
+                    {inviteData.length === 0 ? <div className="m-1 mx-auto">no invite data!</div> : null}
                     {inviteData.map((i) => (
                         <tr
                         key={i.id}

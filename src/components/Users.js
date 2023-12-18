@@ -7,10 +7,14 @@ import { useState, useEffect } from 'react';
 function UserModal({ isOpen, closeModal, user }) {
   
   const [editedUser, setEditedUser] = useState(user);
+
+  // useEffect(() => {
+  //   console.log(editedUser);
+  // }, [editedUser]);
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    // Use the functional form of setEditedUser to ensure you're working with the latest state
+    console.log(editedUser);
     setEditedUser((prevEditedUser) => ({
       ...prevEditedUser,
       data: {
@@ -22,10 +26,10 @@ function UserModal({ isOpen, closeModal, user }) {
   
   const onSave = async (editedUser) => {
     try {
+
       const userDocRef = doc(db, 'users', user.id);
-      // Update the document in Firestore with the new data
       await updateDoc(userDocRef, {
-        avatar: editedUser.data.avatar,
+        avatar: editedUser.data.avatar || '',
         company: editedUser.data.company,
         email: editedUser.data.email,
         name: editedUser.data.name,
@@ -37,7 +41,6 @@ function UserModal({ isOpen, closeModal, user }) {
       closeModal();
     } catch (error) {
       console.error('Error saving user data:', error);
-      // Handle the error as needed (e.g., show an error message to the user)
     }
   };
       
@@ -120,14 +123,16 @@ function UserModal({ isOpen, closeModal, user }) {
               />
               </div>
               <div className='flex pt-1'>
-              Role:
-              <input
-                  type="text"
+                Role:
+                <select
                   name="role"
-                  value={editedUser?.data?.role || ''} 
+                  value={editedUser?.data?.role || ''}
                   onChange={handleInputChange}
                   className="border p-1 ms-2 flex-grow"
-              />
+                >
+                  <option value="manager">manager</option>
+                  <option value="member">member</option>
+                </select>
               </div>
               <div className='flex pt-1'>
               Username:
