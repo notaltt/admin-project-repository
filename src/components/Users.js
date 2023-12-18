@@ -242,12 +242,12 @@ export default function Files(){
                         </tbody>
                     </table>
                 
-                    <div className='flex justify-center p-3'>
-                        <span className='m-3 font-bold'>Add User</span>
+                    <div className='flex justify-center items-center p-3'>
+                        <span className='mx-2 font-bold'>Add User</span>
                         <button
                         onClick={() => handleCreate()}
-                        className="bg-blue-300 hover:bg-blue-400 active:bg-blue-500 text-white p-2 rounded-full shadow-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                        className="bg-blue-300 hover:bg-blue-200 active:bg-blue-400 text-white p-2 rounded-full shadow-md flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                             </svg>
                         </button>

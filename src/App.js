@@ -1,7 +1,7 @@
 import './App.css';
 import Panel from "./components/Panel";
 import Login from "./components/Login";
-import Dashboard from "./components/Files";
+import ManageInvites from "./components/ManageInvites";
 import ManageTeam from './components/ManageTeamDashboard';
 import Users from './components/Users';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
@@ -13,7 +13,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login/>}/>
           <Route path="/panel" element={<Panel/>}/>
-          <Route path="/files" element={<Dashboard/>}/>
+          <Route path="/invites" element={<ManageInvites/>}/>
           <Route path="/manage-team" element={<ManageTeam/>}/>
           <Route path="/users" element={<Users/>}/>
         </Routes>
