@@ -1,5 +1,4 @@
 import './App.css';
-import Panel from "./components/Panel";
 import Login from "./components/Login";
 import ManageInvites from "./components/ManageInvites";
 import ManageTeam from './components/ManageTeamDashboard';
