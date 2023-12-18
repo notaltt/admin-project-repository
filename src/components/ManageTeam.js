@@ -17,7 +17,6 @@ export default function ManageTeam() {
   const [teamData, setTeamData] = useState([]);
   const [teamExists, setTeamExists] = useState(0);
   const [deleteTeam, setDeleteTeam] = useState(false);
-  // const [editCompany, setEditCompany] = useState(false);
   const [deleteCompany, setDeleteCompany] = useState(false);
   const companyStorage = ref(storage, 'company/');
 

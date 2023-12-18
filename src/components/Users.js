@@ -7,10 +7,6 @@ import { useState, useEffect } from 'react';
 function UserModal({ isOpen, closeModal, user }) {
   
   const [editedUser, setEditedUser] = useState(user);
-
-  // useEffect(() => {
-  //   console.log(editedUser);
-  // }, [editedUser]);
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -212,52 +208,54 @@ export default function Files(){
            <SideBar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar}/>
 
             <div className='flex flex-col flex-1 w-full  overflow-y-scroll'>
-                <header className='justify-content z-10 bg-white shadow-md dark:bg-gray-950'>
-                </header>
-                <main >
-                    <table className="table-auto">
-                        <thead className='bg-slate-300'>
-                        <tr>
-                            <th className="px-4 py-2">ID</th>
-                            <th className="px-4 py-2">Avatar</th>
-                            <th className="px-4 py-2">Company</th>
-                            <th className="px-4 py-2">Email</th>
-                            <th className="px-4 py-2">Name</th>
-                            <th className="px-4 py-2">Phone</th>
-                            <th className="px-4 py-2">Role</th>
-                            <th className="px-4 py-2">Username</th>
+              <header className='justify-content =shadow-md dark:bg-gray-950 bg-blue-50'>
+                  <h1 className='text-2xl font-bold m-4 '>Manage Users</h1>
+              </header>
+
+              <main className="mx-auto my-5">
+                  <div className="mx-auto m-4 rounded-md bg-white shadow-md">
+                  <table className="table-auto">
+                    <thead className='bg-gradient-to-r from-sky-100 via-sky-200 to-sky-300'>
+                      <th className="px-4 py-2">ID</th>
+                      <th className="px-4 py-2">Avatar</th>
+                      <th className="px-4 py-2">Company</th>
+                      <th className="px-4 py-2">Email</th>
+                      <th className="px-4 py-2">Name</th>
+                      <th className="px-4 py-2">Phone</th>
+                      <th className="px-4 py-2">Role</th>
+                      <th className="px-4 py-2">Username</th>
+                    </thead>
+                    <tbody>
+                    {userData.map((user) => (
+                        <tr
+                        key={user.id}
+                        onClick={() => handleRowClick(user.id)}
+                        className="cursor-pointer hover:bg-gray-200" >
+                            <td className="border px-2 py-1">{user.id}</td>
+                            <td className="border px-2 py-1">{user.data.avatar}</td>
+                            <td className="border px-2 py-1">{user.data.company}</td>
+                            <td className="border px-2 py-1">{user.data.email}</td>
+                            <td className="border px-2 py-1">{user.data.name}</td>
+                            <td className="border px-2 py-1">{user.data.phone}</td>
+                            <td className="border px-2 py-1">{user.data.role}</td>
+                            <td className="border px-2 py-1">{user.data.username}</td>
                         </tr>
-                        </thead>
-                        <tbody>
-                        {userData.map((user) => (
-                            <tr
-                            key={user.id}
-                            onClick={() => handleRowClick(user.id)}
-                            className="cursor-pointer hover:bg-gray-200" >
-                                <td className="border px-2 py-1">{user.id}</td>
-                                <td className="border px-2 py-1">{user.data.avatar}</td>
-                                <td className="border px-2 py-1">{user.data.company}</td>
-                                <td className="border px-2 py-1">{user.data.email}</td>
-                                <td className="border px-2 py-1">{user.data.name}</td>
-                                <td className="border px-2 py-1">{user.data.phone}</td>
-                                <td className="border px-2 py-1">{user.data.role}</td>
-                                <td className="border px-2 py-1">{user.data.username}</td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
-                
-                    <div className='flex justify-center items-center p-3'>
-                        <span className='mx-2 font-bold'>Add User</span>
-                        <button
-                        onClick={() => handleCreate()}
-                        className="bg-blue-300 hover:bg-blue-200 active:bg-blue-400 text-white p-2 rounded-full shadow-md flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                            </svg>
-                        </button>
-                    </div>
-                </main>
+                    ))}
+                    </tbody>
+                  </table>
+                  </div>
+              
+                  <div className='flex justify-center items-center p-3'>
+                      <span className='mx-2 font-bold'>Add User</span>
+                      <button
+                      onClick={() => handleCreate()}
+                      className="bg-blue-300 hover:bg-blue-200 active:bg-blue-400 text-white p-2 rounded-full shadow-md flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                          </svg>
+                      </button>
+                  </div>
+              </main>
             </div>
 
             <UserModal isOpen={isModalOpen} closeModal={closeModal} user={selectedUser} />
