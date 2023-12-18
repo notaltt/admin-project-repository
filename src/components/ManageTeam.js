@@ -224,8 +224,8 @@ export default function ManageTeam() {
   
     const companyRef = doc(db, 'company', companyName);
     const teamRef = doc(db, 'team', generateRandomUID(10));
-    const fileRef = doc(db, 'files', teamNameInput);
-    const notficationRef = doc(db, 'notifications', teamNameInput);
+    const fileRef = doc(db, 'files', generateRandomUID(10));
+    const notficationRef = doc(db, 'notifications', generateRandomUID(10));
     const teamName = `team${teamNumber}`;
     const fieldToUpdate = {};
     const notData = [];
@@ -241,9 +241,13 @@ export default function ManageTeam() {
   
     try {
       await setDoc(notficationRef, {
+        fromCompany: companyName,
+        teamName: teamNameInput,
         notificationData: notData,
       });
       await setDoc(fileRef, {
+        fromCompany: companyName,
+        teamName: teamNameInput,
         fileData: notData,
       });
       await updateDoc(companyRef, {
