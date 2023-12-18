@@ -102,6 +102,8 @@ export default function ManageInvites(){
                 dateFormat="Pp"
                 className='bg-slate-100 rounded-md border p-1'/>
             </p>
+            <a href = {`https://privo.pages.dev/invite?ref=${selectedInvite.id}`}
+              className="px-2 py-1 text-blue-500 hover:text-blue-700">{`https://privo.pages.dev/invite?ref=${selectedInvite.id}`}</a>
           </div>}
           <div className="mt-4 flex justify-center">
             <button onClick={() => onSave()} className="bg-slate-600 text-white px-3 py-1 rounded mx-4">

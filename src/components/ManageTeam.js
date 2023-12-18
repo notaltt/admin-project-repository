@@ -381,12 +381,14 @@ export default function ManageTeam() {
   return (
     <div>
       <div className="flex flex-col items-center justify-center mt-20">
-      <p>Guide:</p>
+      <div className='bg-yellow-100 p-3 border-gray-300 border-dashed border-2 rounded-lg shadow-md opacity-70 hover:opacity-60 transition-opacity duration-100'>
+      <h1 className='text-lg font-bold'>Guide:</h1>
       <p>Input company name first to create a company or to add teams on a specific company</p>
       <p>You can't change your company name, so your created company name is final.</p>
       <p>Click or input the company name or team name to delete.</p>
+      </div>
 
-      <div className='w-full flex flex-row items-center justify-center'>
+      <div className='w-full flex flex-row items-center justify-center m-11'>
         <div className='w-1/2'>
           <input type="text" className="w-full p-2 border rounded shadow-md focus:outline-none focus:ring focus:border-blue-300" placeholder="Company's name"
             value={inputCompanyValue} onChange={handleCompanyInputChange} required/>
@@ -412,9 +414,9 @@ export default function ManageTeam() {
         </div>
       </div>
 
-      <div id='list' className='bg-blue-50 w-3/4 h-full flex rounded mt-2 p-2'>
-        <div id='company' className='w-1/2'>
-          <h2>COMPANY</h2>
+      <div id='list' className='bg-blue-50 w-2/3 h-full flex rounded mt-2 p-2 bg-gradient-to-r from-sky-100 via-sky-200 to-sky-300'>
+        <div id='company' className='w-1/2 bg-white m-1'>
+          <h2 className='p-2 bg-gray-100 font-bold'>COMPANY</h2>
           <ul>
             {companyData.length === 0 ? (
               <p>No data available.</p>
@@ -429,8 +431,8 @@ export default function ManageTeam() {
             )}
           </ul>
         </div>
-        <div id='team' className='w-1/2'>
-          <h2>TEAM</h2>
+        <div id='team' className='w-1/2 bg-white m-1'>
+          <h2 className='p-2 bg-gray-100 font-bold'>TEAM</h2>
           <ul>
             {inputCompanyValue.length === 0 ? (
               <p>No Company Selected.</p>
