@@ -226,6 +226,7 @@ export default function Files(){
                       <th className="px-4 py-2">Username</th>
                     </thead>
                     <tbody>
+                    {userData.length === 0 ? <tr><th>fetching...</th></tr> : null}
                     {userData.map((user) => (
                         <tr
                         key={user.id}
